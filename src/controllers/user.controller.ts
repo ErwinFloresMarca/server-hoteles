@@ -142,12 +142,12 @@ export class UserController {
     const password = await this.passwordHasher.hashPassword(
       newUserRequest.password,
     );
+    const newUser = _.omit(newUserRequest, 'password') as DataObject<User>;
+    newUser.estado = false;
 
     try {
       // create the new user
-      const savedUser = await this.userRepository.create(
-        _.omit(newUserRequest, 'password') as DataObject<User>,
-      );
+      const savedUser = await this.userRepository.create(newUser);
 
       // set the password
       await this.userRepository
@@ -193,11 +193,12 @@ export class UserController {
       newUserRequest.password,
     );
 
+    const newUser = _.omit(newUserRequest, 'password') as DataObject<User>;
+    if ((await this.userRepository.count()).count > 0) newUser.estado = false;
+
     try {
       // create the new user
-      const savedUser = await this.userRepository.create(
-        _.omit(newUserRequest, 'password') as DataObject<User>,
-      );
+      const savedUser = await this.userRepository.create(newUser);
 
       // set the password
       await this.userRepository

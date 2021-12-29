@@ -1,5 +1,10 @@
-import {model, property} from '@loopback/repository';
-import {TimeStamp} from '.';
+import {belongsTo, model, property} from '@loopback/repository';
+import {Categoria, CategoriaWithRelations} from './categoria.model';
+import {
+  EstadoAmbiente,
+  EstadoAmbienteWithRelations,
+} from './estado-ambiente.model';
+import {TimeStamp} from './time-stamp.model';
 
 @model()
 export class Habitacion extends TimeStamp {
@@ -34,10 +39,11 @@ export class Habitacion extends TimeStamp {
   })
   piso: number;
 
-  @property({
-    type: 'string',
-  })
-  categoriaId?: string;
+  @belongsTo(() => Categoria)
+  categoriaId: string;
+
+  @belongsTo(() => EstadoAmbiente)
+  estadoId: string;
 
   constructor(data?: Partial<Habitacion>) {
     super(data);
@@ -46,6 +52,8 @@ export class Habitacion extends TimeStamp {
 
 export interface HabitacionRelations {
   // describe navigational properties here
+  categoria?: CategoriaWithRelations;
+  estado?: EstadoAmbienteWithRelations;
 }
 
 export type HabitacionWithRelations = Habitacion & HabitacionRelations;

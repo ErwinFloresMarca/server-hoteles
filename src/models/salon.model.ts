@@ -1,5 +1,9 @@
-import {model, property} from '@loopback/repository';
-import {TimeStamp} from '.';
+import {belongsTo, model, property} from '@loopback/repository';
+import {
+  EstadoAmbiente,
+  EstadoAmbienteWithRelations,
+} from './estado-ambiente.model';
+import {TimeStamp} from './time-stamp.model';
 
 @model()
 export class Salon extends TimeStamp {
@@ -28,6 +32,8 @@ export class Salon extends TimeStamp {
   })
   precio: number;
 
+  @belongsTo(() => EstadoAmbiente)
+  estadoId: string;
 
   constructor(data?: Partial<Salon>) {
     super(data);
@@ -36,6 +42,7 @@ export class Salon extends TimeStamp {
 
 export interface SalonRelations {
   // describe navigational properties here
+  estado?: EstadoAmbienteWithRelations;
 }
 
 export type SalonWithRelations = Salon & SalonRelations;

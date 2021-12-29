@@ -1,6 +1,6 @@
-import {model, property, hasMany} from '@loopback/repository';
-import {TimeStamp} from '.';
-import {Habitacion} from './habitacion.model';
+import {hasMany, model, property} from '@loopback/repository';
+import {Habitacion, HabitacionWithRelations} from './habitacion.model';
+import {TimeStamp} from './time-stamp.model';
 
 @model()
 export class Categoria extends TimeStamp {
@@ -27,6 +27,7 @@ export class Categoria extends TimeStamp {
 
 export interface CategoriaRelations {
   // describe navigational properties here
+  habitaciones?: HabitacionWithRelations[];
 }
 
 export type CategoriaWithRelations = Categoria & CategoriaRelations;

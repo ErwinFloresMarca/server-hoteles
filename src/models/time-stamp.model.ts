@@ -16,13 +16,6 @@ export class TimeStamp extends Entity {
   })
   fechaCreacion?: string;
 
-  @property({
-    type: 'date',
-    defaultFn: 'now',
-    required: false,
-  })
-  ultimaActualizacion?: string;
-
   constructor(data?: Partial<TimeStamp>) {
     super(data);
   }
