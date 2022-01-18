@@ -2,11 +2,11 @@ import {Getter, inject} from '@loopback/core';
 import {
   DefaultCrudRepository,
   HasOneRepositoryFactory,
-  repository,
-} from '@loopback/repository';
+  repository, HasManyRepositoryFactory} from '@loopback/repository';
 import {DbDataSource} from '../datasources';
-import {User, UserCredentials, UserRelations} from '../models';
+import {User, UserCredentials, UserRelations, CuadernoDeNovedades} from '../models';
 import {UserCredentialsRepository} from './user-credentials.repository';
+import {CuadernoDeNovedadesRepository} from './cuaderno-de-novedades.repository';
 
 export type Credentials = {
   email: string;
@@ -26,12 +26,16 @@ export class UserRepository extends DefaultCrudRepository<
     typeof User.prototype.id
   >;
 
+  public readonly cuadernoDeNovedades: HasManyRepositoryFactory<CuadernoDeNovedades, typeof User.prototype.id>;
+
   constructor(
     @inject('datasources.db') dataSource: DbDataSource,
     @repository.getter('UserCredentialsRepository')
-    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>,
+    protected userCredentialsRepositoryGetter: Getter<UserCredentialsRepository>, @repository.getter('CuadernoDeNovedadesRepository') protected cuadernoDeNovedadesRepositoryGetter: Getter<CuadernoDeNovedadesRepository>,
   ) {
     super(User, dataSource);
+    this.cuadernoDeNovedades = this.createHasManyRepositoryFactoryFor('cuadernoDeNovedades', cuadernoDeNovedadesRepositoryGetter,);
+    this.registerInclusionResolver('cuadernoDeNovedades', this.cuadernoDeNovedades.inclusionResolver);
     this.userCredentials = this.createHasOneRepositoryFactoryFor(
       'userCredentials',
       userCredentialsRepositoryGetter,

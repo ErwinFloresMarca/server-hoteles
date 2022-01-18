@@ -1,14 +1,9 @@
-import {model, property} from '@loopback/repository';
-import {TimeStamp} from '.';
+import {hasMany, model, property} from '@loopback/repository';
+import {Persona, PersonaWithRelations} from './persona.model';
+import {TimeStamp} from './time-stamp.model';
 
 @model()
 export class TipoPersona extends TimeStamp {
-  @property({
-    type: 'string',
-    required: true,
-  })
-  descripcion: string;
-
   @property({
     type: 'string',
     id: true,
@@ -16,6 +11,14 @@ export class TipoPersona extends TimeStamp {
   })
   id?: string;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  descripcion: string;
+
+  @hasMany(() => Persona)
+  personas: Persona[];
 
   constructor(data?: Partial<TipoPersona>) {
     super(data);
@@ -24,6 +27,7 @@ export class TipoPersona extends TimeStamp {
 
 export interface TipoPersonaRelations {
   // describe navigational properties here
+  personas: PersonaWithRelations[];
 }
 
 export type TipoPersonaWithRelations = TipoPersona & TipoPersonaRelations;

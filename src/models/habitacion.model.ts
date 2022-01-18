@@ -1,13 +1,12 @@
-import {belongsTo, model, property} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {Categoria, CategoriaWithRelations} from './categoria.model';
 import {
   EstadoAmbiente,
   EstadoAmbienteWithRelations,
 } from './estado-ambiente.model';
-import {TimeStamp} from './time-stamp.model';
 
 @model()
-export class Habitacion extends TimeStamp {
+export class Habitacion extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -38,6 +37,13 @@ export class Habitacion extends TimeStamp {
     required: true,
   })
   piso: number;
+
+  @property({
+    type: 'date',
+    defaultFn: 'now',
+    required: false,
+  })
+  fechaCreacion?: string;
 
   @belongsTo(() => Categoria)
   categoriaId: string;

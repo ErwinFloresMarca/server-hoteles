@@ -68,6 +68,19 @@ export class EstadoController {
   async count(
     @param.where(EstadoAmbiente) where?: Where<EstadoAmbiente>,
   ): Promise<Count> {
+    const cantEstados = (await this.estadoAmbienteRepository.count()).count;
+    if (cantEstados === 0) {
+      const listEstados = [
+        {descripcion: 'OCUPADO'},
+        {descripcion: 'LIBRE'},
+        {descripcion: 'EN LIMPIEZA'},
+        {descripcion: 'EN MATENIMIENTO'},
+        {descripcion: 'FUERA DE SERVICIO'},
+      ];
+      for (const e of listEstados) {
+        await this.estadoAmbienteRepository.create(e);
+      }
+    }
     return this.estadoAmbienteRepository.count(where);
   }
 
@@ -90,6 +103,19 @@ export class EstadoController {
   async find(
     @param.filter(EstadoAmbiente) filter?: Filter<EstadoAmbiente>,
   ): Promise<EstadoAmbiente[]> {
+    const cantEstados = (await this.estadoAmbienteRepository.count()).count;
+    if (cantEstados === 0) {
+      const listEstados = [
+        {descripcion: 'OCUPADO'},
+        {descripcion: 'LIBRE'},
+        {descripcion: 'EN LIMPIEZA'},
+        {descripcion: 'EN MATENIMIENTO'},
+        {descripcion: 'FUERA DE SERVICIO'},
+      ];
+      for (const e of listEstados) {
+        await this.estadoAmbienteRepository.create(e);
+      }
+    }
     return this.estadoAmbienteRepository.find(filter);
   }
 

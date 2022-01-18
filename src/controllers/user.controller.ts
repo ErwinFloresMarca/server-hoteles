@@ -16,8 +16,10 @@ import {
   Where,
 } from '@loopback/repository';
 import {
+  del,
   get,
   getModelSchemaRef,
+  getWhereSchemaFor,
   HttpErrors,
   param,
   patch,
@@ -33,7 +35,7 @@ import {
   UserServiceBindings,
 } from '../keys';
 import {basicAuthorization} from '../middlewares/auth.midd';
-import {User} from '../models';
+import {CuadernoDeNovedades, User} from '../models';
 import {Credentials, UserRepository} from '../repositories';
 import {PasswordHasher, validateCredentials} from '../services';
 import {
@@ -285,6 +287,9 @@ export class UserController {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
 
+    if (!user.estado) {
+      throw new HttpErrors[401]('El usuario esta inhabilitado');
+    }
     // convert a User object into a UserProfile object (reduced set of properties)
     const userProfile = this.userService.convertToUserProfile(user);
 
@@ -292,5 +297,120 @@ export class UserController {
     const token = await this.jwtService.generateToken(userProfile);
 
     return {token};
+  }
+
+  //user - cuaderno de novedades relation
+  @get('/users/{id}/cuaderno-de-novedades', {
+    responses: {
+      '200': {
+        description: 'Array of User has many CuadernoDeNovedades',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(CuadernoDeNovedades),
+            },
+          },
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: undefined,
+    voters: [basicAuthorization],
+  })
+  async findCuadernoDeNovedades(
+    @param.path.string('id') id: string,
+    @param.query.object('filter') filter?: Filter<CuadernoDeNovedades>,
+  ): Promise<CuadernoDeNovedades[]> {
+    return this.userRepository.cuadernoDeNovedades(id).find(filter);
+  }
+
+  @post('/users/{id}/cuaderno-de-novedades', {
+    responses: {
+      '200': {
+        description: 'User model instance',
+        content: {
+          'application/json': {schema: getModelSchemaRef(CuadernoDeNovedades)},
+        },
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: undefined,
+    voters: [basicAuthorization],
+  })
+  async createCuadernoDeNovedades(
+    @param.path.string('id') id: typeof User.prototype.id,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(CuadernoDeNovedades, {
+            title: 'NewCuadernoDeNovedadesInUser',
+            exclude: ['id'],
+            optional: ['userId'],
+          }),
+        },
+      },
+    })
+    cuadernoDeNovedades: Omit<CuadernoDeNovedades, 'id'>,
+  ): Promise<CuadernoDeNovedades> {
+    return this.userRepository
+      .cuadernoDeNovedades(id)
+      .create(cuadernoDeNovedades);
+  }
+
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: undefined,
+    voters: [basicAuthorization],
+  })
+  @patch('/users/{id}/cuaderno-de-novedades', {
+    responses: {
+      '200': {
+        description: 'User.CuadernoDeNovedades PATCH success count',
+        content: {'application/json': {schema: CountSchema}},
+      },
+    },
+  })
+  async patchCuadernoDeNovedades(
+    @param.path.string('id') id: string,
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(CuadernoDeNovedades, {partial: true}),
+        },
+      },
+    })
+    cuadernoDeNovedades: Partial<CuadernoDeNovedades>,
+    @param.query.object('where', getWhereSchemaFor(CuadernoDeNovedades))
+    where?: Where<CuadernoDeNovedades>,
+  ): Promise<Count> {
+    return this.userRepository
+      .cuadernoDeNovedades(id)
+      .patch(cuadernoDeNovedades, where);
+  }
+
+  @del('/users/{id}/cuaderno-de-novedades', {
+    responses: {
+      '200': {
+        description: 'User.CuadernoDeNovedades DELETE success count',
+        content: {'application/json': {schema: CountSchema}},
+      },
+    },
+  })
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: undefined,
+    voters: [basicAuthorization],
+  })
+  async deleteCuadernoDeNovedades(
+    @param.path.string('id') id: string,
+    @param.query.object('where', getWhereSchemaFor(CuadernoDeNovedades))
+    where?: Where<CuadernoDeNovedades>,
+  ): Promise<Count> {
+    return this.userRepository.cuadernoDeNovedades(id).delete(where);
   }
 }

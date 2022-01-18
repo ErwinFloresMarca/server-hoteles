@@ -1,4 +1,8 @@
-import {hasOne, model, property} from '@loopback/repository';
+import {hasMany, hasOne, model, property} from '@loopback/repository';
+import {
+  CuadernoDeNovedades,
+  CuadernoDeNovedadesWithRelations,
+} from './cuaderno-de-novedades.model';
 import {TimeStamp} from './time-stamp.model';
 import {UserCredentials} from './user-credentials.model';
 
@@ -44,6 +48,9 @@ export class User extends TimeStamp {
   @hasOne(() => UserCredentials)
   userCredentials: UserCredentials;
 
+  @hasMany(() => CuadernoDeNovedades)
+  cuadernoDeNovedades: CuadernoDeNovedades[];
+
   constructor(data?: Partial<User>) {
     super(data);
   }
@@ -51,6 +58,7 @@ export class User extends TimeStamp {
 
 export interface UserRelations {
   // describe navigational properties here
+  cuadernoDeNovedades: CuadernoDeNovedadesWithRelations[];
 }
 
 export type UserWithRelations = User & UserRelations;
