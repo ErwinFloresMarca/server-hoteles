@@ -58,6 +58,13 @@ export class TipoPersonaController {
   async count(
     @param.where(TipoPersona) where?: Where<TipoPersona>,
   ): Promise<Count> {
+    const cantTipoPersonas = (await this.tipoPersonaRepository.count()).count;
+    if (cantTipoPersonas === 0) {
+      const listEstados = [{descripcion: 'NATURAL'}, {descripcion: 'JURIDICA'}];
+      for (const e of listEstados) {
+        await this.tipoPersonaRepository.create(e);
+      }
+    }
     return this.tipoPersonaRepository.count(where);
   }
 
@@ -76,6 +83,13 @@ export class TipoPersonaController {
   async find(
     @param.filter(TipoPersona) filter?: Filter<TipoPersona>,
   ): Promise<TipoPersona[]> {
+    const cantTipoPersonas = (await this.tipoPersonaRepository.count()).count;
+    if (cantTipoPersonas === 0) {
+      const listEstados = [{descripcion: 'NATURAL'}, {descripcion: 'JURIDICA'}];
+      for (const e of listEstados) {
+        await this.tipoPersonaRepository.create(e);
+      }
+    }
     return this.tipoPersonaRepository.find(filter);
   }
 
