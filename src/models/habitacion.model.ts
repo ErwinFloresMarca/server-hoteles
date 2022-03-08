@@ -1,9 +1,16 @@
-import {belongsTo, Entity, model, property} from '@loopback/repository';
+import {
+  belongsTo,
+  Entity,
+  hasMany,
+  model,
+  property,
+} from '@loopback/repository';
 import {Categoria, CategoriaWithRelations} from './categoria.model';
 import {
   EstadoAmbiente,
   EstadoAmbienteWithRelations,
 } from './estado-ambiente.model';
+import {Recepcion, RecepcionWithRelations} from './recepcion.model';
 
 @model()
 export class Habitacion extends Entity {
@@ -51,6 +58,9 @@ export class Habitacion extends Entity {
   @belongsTo(() => EstadoAmbiente)
   estadoId: string;
 
+  @hasMany(() => Recepcion)
+  recepciones: Recepcion[];
+
   constructor(data?: Partial<Habitacion>) {
     super(data);
   }
@@ -60,6 +70,7 @@ export interface HabitacionRelations {
   // describe navigational properties here
   categoria?: CategoriaWithRelations;
   estado?: EstadoAmbienteWithRelations;
+  recepciones?: RecepcionWithRelations[];
 }
 
 export type HabitacionWithRelations = Habitacion & HabitacionRelations;

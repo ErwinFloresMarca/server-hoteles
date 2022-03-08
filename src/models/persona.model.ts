@@ -1,4 +1,5 @@
-import {belongsTo, model, property} from '@loopback/repository';
+import {belongsTo, hasMany, model, property} from '@loopback/repository';
+import {Recepcion, RecepcionWithRelations} from './recepcion.model';
 import {TimeStamp} from './time-stamp.model';
 import {TipoPersona, TipoPersonaWithRelations} from './tipo-persona.model';
 
@@ -49,6 +50,9 @@ export class Persona extends TimeStamp {
   @belongsTo(() => TipoPersona)
   tipoPersonaId: string;
 
+  @hasMany(() => Recepcion)
+  recepciones: Recepcion[];
+
   constructor(data?: Partial<Persona>) {
     super(data);
   }
@@ -56,7 +60,8 @@ export class Persona extends TimeStamp {
 
 export interface PersonaRelations {
   // describe navigational properties here
-  tipoPersona: TipoPersonaWithRelations;
+  tipoPersona?: TipoPersonaWithRelations;
+  recepciones?: RecepcionWithRelations[];
 }
 
 export type PersonaWithRelations = Persona & PersonaRelations;
