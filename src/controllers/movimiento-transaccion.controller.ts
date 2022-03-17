@@ -12,19 +12,16 @@ import {
   getWhereSchemaFor,
   param,
   patch,
-  post,
   requestBody,
 } from '@loopback/rest';
-import {
-  Movimiento,
-  Transaccion,
-} from '../models';
+import {Transaccion} from '../models';
 import {MovimientoRepository} from '../repositories';
 
 export class MovimientoTransaccionController {
   constructor(
-    @repository(MovimientoRepository) protected movimientoRepository: MovimientoRepository,
-  ) { }
+    @repository(MovimientoRepository)
+    protected movimientoRepository: MovimientoRepository,
+  ) {}
 
   @get('/movimientos/{id}/transaccions', {
     responses: {
@@ -45,31 +42,6 @@ export class MovimientoTransaccionController {
     return this.movimientoRepository.transacciones(id).find(filter);
   }
 
-  @post('/movimientos/{id}/transaccions', {
-    responses: {
-      '200': {
-        description: 'Movimiento model instance',
-        content: {'application/json': {schema: getModelSchemaRef(Transaccion)}},
-      },
-    },
-  })
-  async create(
-    @param.path.string('id') id: typeof Movimiento.prototype.id,
-    @requestBody({
-      content: {
-        'application/json': {
-          schema: getModelSchemaRef(Transaccion, {
-            title: 'NewTransaccionInMovimiento',
-            exclude: ['id'],
-            optional: ['movimientoId']
-          }),
-        },
-      },
-    }) transaccion: Omit<Transaccion, 'id'>,
-  ): Promise<Transaccion> {
-    return this.movimientoRepository.transacciones(id).create(transaccion);
-  }
-
   @patch('/movimientos/{id}/transaccions', {
     responses: {
       '200': {
@@ -88,9 +60,12 @@ export class MovimientoTransaccionController {
       },
     })
     transaccion: Partial<Transaccion>,
-    @param.query.object('where', getWhereSchemaFor(Transaccion)) where?: Where<Transaccion>,
+    @param.query.object('where', getWhereSchemaFor(Transaccion))
+    where?: Where<Transaccion>,
   ): Promise<Count> {
-    return this.movimientoRepository.transacciones(id).patch(transaccion, where);
+    return this.movimientoRepository
+      .transacciones(id)
+      .patch(transaccion, where);
   }
 
   @del('/movimientos/{id}/transaccions', {
@@ -103,7 +78,8 @@ export class MovimientoTransaccionController {
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(Transaccion)) where?: Where<Transaccion>,
+    @param.query.object('where', getWhereSchemaFor(Transaccion))
+    where?: Where<Transaccion>,
   ): Promise<Count> {
     return this.movimientoRepository.transacciones(id).delete(where);
   }

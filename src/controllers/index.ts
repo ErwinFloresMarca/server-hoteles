@@ -32,3 +32,7 @@ export * from './movimiento-detalle.controller';
 export * from './detalle-movimiento.controller';
 export * from './producto-detalle.controller';
 export * from './detalle-producto.controller';
+export * from './recepcion.controller';
+export * from './movimiento.controller';
+export * from './producto.controller';
+export * from './caja-chica.controller';
